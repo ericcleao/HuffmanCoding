@@ -1,14 +1,17 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <QBitArray>
+
 class Node
 {
     int frequency;
     unsigned char byte;
     Node *right;
     Node *left;
-    char position;
 public:
+    QBitArray code;
+
     Node();
     bool isSingle();
     bool isLeaf();
@@ -23,7 +26,7 @@ public:
     Node *getRight() const;
     bool isRight();
     void setRight(const Node *right);
-    void setPosition(int position);
+    void encode(bool value);
 };
 
 #endif // NODE_H

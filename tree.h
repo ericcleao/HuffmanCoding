@@ -7,15 +7,14 @@
 class Tree
 {
     Node *root;
-    QList<Node*> representation;
 public:
-    unsigned char tree[123];
+    unsigned char tree[1200];
     Tree();
     Node* getRoot();
     void TreeSort(QList<Node*> *content);
     void fill(QList<Node*> content);
     void print();
-    void build();
+    int build(Node *aux, int cont);
 };
 
 #endif // TREE_H

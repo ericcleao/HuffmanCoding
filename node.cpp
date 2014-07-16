@@ -5,7 +5,6 @@ Node::Node(){
     byte = 0;
     left = 0;
     right = 0;
-    position = 0;
 }
 
 bool Node::isSingle(){
@@ -49,7 +48,7 @@ Node *Node::getLeft()const{
 }
 
 bool Node::isLeft(){
-    if(position == 1){
+    if(code.at(code.size() - 1) == 0){
         return true;
     }
     return false;
@@ -64,7 +63,7 @@ Node *Node::getRight()const{
 }
 
 bool Node::isRight(){
-    if(position == 2){
+    if(code.at(code.size() - 1) == 1){
         return true;
     }
     return false;
@@ -74,6 +73,7 @@ void Node::setRight(const Node *right){
     this->right = (Node*)right;
 }
 
-void Node::setPosition(int position){
-    this->position = position;
+void Node::encode(bool value){
+    code.resize(code.size() + 1);
+    code.setBit(code.size() - 1, value);
 }
