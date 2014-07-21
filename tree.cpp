@@ -4,8 +4,9 @@
 Tree::Tree()
 {
     root = new Node;
+    representation = new unsigned char[1200];
     for(int cont = 0; cont < 900; ++cont)
-        tree[cont] = '\0';
+        representation[cont] = '\0';
 }
 
 Node *Tree::getRoot()
@@ -51,14 +52,10 @@ void Tree::fill(QList<Node*> content){
         root->incFrequency(content.at(1)->getFrequency());
 
         if(content.at(0)->getFrequency() > content.at(1)->getFrequency()){
-//            content.at(0)->encode(true);
             root->setRight(content.at(0));
-//            content.at(1)->encode(false);
             root->setLeft(content.at(1));            
         } else{
-//            content.at(1)->encode(true);
             root->setRight(content.at(1));
-//            content.at(0)->encode(false);
             root->setLeft(content.at(0));
         }
 
@@ -73,61 +70,143 @@ void Tree::fill(QList<Node*> content){
     }
 }
 
-int Tree::build(Node *aux, int cont){
+int Tree::make(File *file, Node *aux, int current){
     aux->getLeft()->code.resize(aux->code.size());
     aux->getRight()->code.resize(aux->code.size());
     aux->code.resize(aux->code.size() + 1);
-    tree[cont] = 40;
-    ++cont;
+    if(aux != root){
+        representation[current] = 40;
+        ++current;
+    }
     if(aux->getLeft()->isLeaf()){
         aux->getLeft()->encode(false);
         aux->getLeft()->code |= aux->code;
         if(aux->getLeft()->getByte() != 45 && aux->getLeft()->getByte() != 40 && aux->getLeft()->getByte() != 41){
-            tree[cont] = aux->getLeft()->getByte();
+            representation[current] = aux->getLeft()->getByte();
         } else{
-            tree[cont] = 45;
-            ++cont;
-            tree[cont] = aux->getLeft()->getByte();
+            representation[current] = 45;
+            ++current;
+            representation[current] = aux->getLeft()->getByte();
         }
-        printf("Code/Byte: ");
-        for(int i = 0; i < aux->getLeft()->code.size(); ++i)
-        {
-            printf("%d", aux->getLeft()->code.at(i));
-        }
-        printf(" %c\n", aux->getLeft()->getByte());
-        ++cont;
+//        printf("Code/Byte: ");
+//        for(int i = 0; i < aux->getLeft()->code.size(); ++i)
+//        {
+//            printf("%d", aux->getLeft()->code.at(i));
+//        }
+//        printf(" %c\n", aux->getLeft()->getByte());
+        file->setCode(aux->getLeft()->code, aux->getLeft()->getByte());
+        ++current;
     } else{
         aux->getLeft()->encode(false);
         aux->getLeft()->code |= aux->code;
-        cont = build(aux->getLeft(), cont);
-        ++cont;
+        current = make(file, aux->getLeft(), current);
+        ++current;
     }
     if(aux->getRight()->isLeaf()){
         aux->getRight()->encode(true);
         aux->getRight()->code |= aux->code;
         if(aux->getRight()->getByte() != 45 && aux->getRight()->getByte() != 40 && aux->getRight()->getByte() != 41){
-            tree[cont] = aux->getRight()->getByte();
+            representation[current] = aux->getRight()->getByte();
         } else{
-            tree[cont] = 45;
-            ++cont;
-            tree[cont] = aux->getRight()->getByte();
+            representation[current] = 45;
+            ++current;
+            representation[current] = aux->getRight()->getByte();
         }
-        printf("Code/Byte: ");
-        for(int i = 0; i < aux->getRight()->code.size(); ++i)
-        {
-            printf("%d", aux->getRight()->code.at(i));
-        }
-        printf(" %c\n", aux->getRight()->getByte());
-        ++cont;
+//        printf("Code/Byte: ");
+//        for(int i = 0; i < aux->getRight()->code.size(); ++i)
+//        {
+//            printf("%d", aux->getRight()->code.at(i));
+//        }
+//        printf(" %c\n", aux->getRight()->getByte());
+        file->setCode(aux->getRight()->code, aux->getRight()->getByte());
+        ++current;
     } else{
         aux->getRight()->encode(true);
         aux->getRight()->code |= aux->code;
-        cont = build(aux->getRight(), cont);
-        ++cont;
+        current = make(file, aux->getRight(), current);
+        ++current;
     }
-    tree[cont] = 41;
-    ++cont;
-    return cont;
+    representation[current] = 41;
+    return current;
+}
+
+void Tree::unmake(Node *aux, unsigned char *representation, int start, int end){
+    if(end <= start){
+        return;
+    }
+    if(aux->getLeft() == 0){
+        aux->setLeft(new Node);
+    }
+    if(aux->getRight() == 0){
+        aux->setRight(new Node);
+    }
+    cout << "s" << start << "|" << "e" << end << endl;
+
+    if(representation[start] == 40){
+        int i = findRight(representation, start, end);
+        cout << "i = " <<  i << endl;
+        if(i < end - 1){
+            unmake(aux->getLeft(), representation, start, i);
+            if(i  != end - 2){
+                unmake(aux->getRight(), representation, i+1, end);
+            } else{
+                cout << "Exception2 = " << representation[i+1] << endl;
+                aux->getRight()->setByte(representation[i+1]);
+            }
+        } else if(i == end){
+            unmake(aux,representation,start + 1, end);
+        } else{
+            if(representation[end] != 41){
+                cout << "Exception = " << representation[end] << endl;
+                aux->getRight()->setByte(representation[end]);
+                unmake(aux->getLeft(),representation,start, i);
+            } else{
+                if(start - end > 3){
+                    unmake(aux->getRight(),representation,start, i);
+                } else{
+                    unmake(aux,representation,start, i);
+                }
+            }
+        }
+    } else if(representation[start] != 41){
+        if(representation[start] == 45){
+            ++start;
+        }
+        if(aux->getLeft()->getByte() == 0){
+            cout << "Left = " << representation[start] << endl;
+            aux->getLeft()->setByte(representation[start]);
+            if(representation[start + 1] != 40){
+                unmake(aux,representation,start + 1,end);
+            } else{
+                unmake(aux->getRight(),representation,start + 1,end);
+            }
+        } else if(aux->getRight()->getByte() == 0){
+            cout << "Right = " << representation[start] << endl;
+            aux->getRight()->setByte(representation[start]);
+        }
+    }
+}
+
+int Tree::findRight(unsigned char *representation, int current, int size){
+    int open = 0, close = 0;
+    for(int cont = current; cont <= size;++cont){
+        if(representation[cont] == 40 && (cont == 0 || representation[cont - 1] != 45)){
+            ++open;
+        } else if(representation[cont] == 41 && (cont == 0 || representation[cont - 1] != 45)){
+            ++close;
+        }
+
+        if(open - close == 0){
+            return cont;
+        }
+    }
+
+    cout << "error2!!";
+    return size + 1;
+}
+
+unsigned char *Tree::getRep(){
+    return this->representation;
 }
 
 //void Tree::build(){
