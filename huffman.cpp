@@ -12,18 +12,18 @@ Huffman::Huffman(){
     coding = "";
 }
 
-void Huffman::Compress(QString pathIn, QString pathOut, QString nameOut){
+void Huffman::compress(QString pathIn, QString pathOut, QString nameOut){
     file->setFile(pathIn);
     list = file->getFrequency();
     tree->fill(list);
     sizeTree = tree->make(file, tree->getRoot(), 0);
 
-    ofstream out(QStringtoChar(pathOut, nameOut, "huff"));
+    ofstream out(qStringtoChar(pathOut, nameOut, "huff"));
 
     QBitArray temp;
     temp.resize(8);
 
-    for(int cont = 0; cont < 24; ++cont){
+    for(int cont = 0; cont < 3; ++cont){
         out << 0;
     }
 
@@ -52,20 +52,26 @@ void Huffman::Compress(QString pathIn, QString pathOut, QString nameOut){
     if(sizeTrash%8 != 0){
         sizeTrash = 8 - sizeTrash%8;
         out << bitToChar(temp);
+        temp.fill(0, 8);
     } else{
         sizeTrash = 0;
     }
 
     out.seekp(0, ios::beg);
     head->fillSizes(QString::number(sizeTrash), QString::number(sizeTree), QString::number(file->getSizeName()));
-    for(int cont = 0; cont < 24; ++cont){
-        out << head->getSizes().at(cont);
+    for(int cont = 0, k = 0; cont < 24; ++cont, ++k){
+        temp.setBit(k%8, head->getSizes().at(cont));
+        if(cont%8 == 7){
+            out << bitToChar(temp);
+            k = -1;
+            temp.fill(0, 8);
+        }
     }
 
     out.close();
 }
 
-char *Huffman::QStringtoChar(QString pathOut, QString nameOut, QString type){
+char *Huffman::qStringtoChar(QString pathOut, QString nameOut, QString type){
     QByteArray archive = (pathOut + nameOut + "." + type).toLatin1();//Unindo o nome do arquivo + a extensão do mesmo + o caminho para salva-lo
     return archive.data();
 }
@@ -78,7 +84,7 @@ unsigned char Huffman::bitToChar(QBitArray bit){
     return character;
 }
 
-void Huffman::Decompress(QString pathIn, QString pathOut){
+void Huffman::decompress(QString pathIn, QString pathOut){
     file->setFile(pathIn);
 
     for(int cont = 0; cont < 24; ++cont){

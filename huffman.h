@@ -19,11 +19,11 @@ class Huffman
 public:
     Tree *tree;
     Huffman();
-    void Compress(QString pathIn, QString pathOut, QString nameOut);
-    void Decompress(QString pathIn, QString pathOut);
+    void compress(QString pathIn, QString pathOut, QString nameOut);
+    void decompress(QString pathIn, QString pathOut);
 private:
     QByteArray coding;
-    char *QStringtoChar(QString pathOut, QString nameOut, QString type);
+    char *qStringtoChar(QString pathOut, QString nameOut, QString type);
     unsigned char bitToChar(QBitArray bit);
 };
 

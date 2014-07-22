@@ -36,9 +36,9 @@ int main()
 //        cout << list.at(cont)->getFrequency() << " " << list.at(cont)->getByte() << endl;
 //    }
     Huffman test1, test2;
-//    test1.Compress("..\\HuffmanCoding\\Arquivos\\pedro.bmp", "..\\HuffmanCoding\\Test\\", "test");
-    test1.Compress("..\\HuffmanCoding\\Arquivos\\in.txt", "..\\HuffmanCoding\\Test\\", "test");
-    test2.Decompress("..\\HuffmanCoding\\Test\\test.huff", "..\\HuffmanCoding\\Test\\out.txt");
+//    test1.compress("..\\HuffmanCoding\\Arquivos\\pedro.bmp", "..\\HuffmanCoding\\Test\\", "test");
+    test1.compress("/home/alunoic/HuffmanCoding/teste1.txt", "", "teste1");
+//    test2.decompress("test2.huff", "out.bmp");
 //    cout << endl;
 //    printTree(test2.tree->getRoot(), test1.tree->getRoot(), 0);
 //    cout << "----------------------------------------------------------------------------" << endl;
