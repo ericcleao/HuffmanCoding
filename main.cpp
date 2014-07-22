@@ -8,14 +8,14 @@ using namespace std;
 
 void printTree(Node* node, Node*comp, int level)
 {
-    if(node->getLeft()!= NULL)
-    {
-        printTree(node->getLeft(), comp->getLeft(), level +1);
-    }
-    cout << qPrintable(QString("\t").repeated(level)) <<"."<< (int)node->getByte() << " " << (int)comp->getByte() <<endl;
     if(node->getRight()!= NULL)
     {
         printTree(node->getRight(), comp->getRight(), level +1);
+    }
+    cout << qPrintable(QString("\t").repeated(level)) <<"."<< (int)node->getByte() << "-" <<level << " " << (int)comp->getByte() <<endl;
+    if(node->getLeft()!= NULL)
+    {
+        printTree(node->getLeft(), comp->getLeft(), level +1);
     }
 }
 
@@ -36,12 +36,12 @@ int main()
 //        cout << list.at(cont)->getFrequency() << " " << list.at(cont)->getByte() << endl;
 //    }
     Huffman test1, test2;
-//    test1.Compress("..\\HuffmanCoding\\Arquivos\\pedro.png", "..\\HuffmanCoding\\Test\\", "test");
+//    test1.Compress("..\\HuffmanCoding\\Arquivos\\pedro.bmp", "..\\HuffmanCoding\\Test\\", "test");
     test1.Compress("..\\HuffmanCoding\\Arquivos\\in.txt", "..\\HuffmanCoding\\Test\\", "test");
-    test2.Decompress("..\\HuffmanCoding\\Test\\test.huff", "..\\HuffmanCoding\\Test\\out.png");
-    cout << endl;
-    printTree(test1.tree->getRoot(),test2.tree->getRoot(), 0);
-    cout << "----------------------------------------------------------------------------" << endl;
+    test2.Decompress("..\\HuffmanCoding\\Test\\test.huff", "..\\HuffmanCoding\\Test\\out.txt");
+//    cout << endl;
+//    printTree(test2.tree->getRoot(), test1.tree->getRoot(), 0);
+//    cout << "----------------------------------------------------------------------------" << endl;
 
 ////    Descomprimindo eric cerqueira;
 //    cout << endl << test1.tree->getRoot()->getLeft()->getLeft()->getByte();

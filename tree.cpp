@@ -81,7 +81,7 @@ int Tree::make(File *file, Node *aux, int current){
     if(aux->getLeft()->isLeaf()){
         aux->getLeft()->encode(false);
         aux->getLeft()->code |= aux->code;
-        if(aux->getLeft()->getByte() != 45 && aux->getLeft()->getByte() != 40 && aux->getLeft()->getByte() != 41){
+        if(aux->getLeft()->getByte() != 45 || aux->getLeft()->getByte() != 40 || aux->getLeft()->getByte() != 41){
             representation[current] = aux->getLeft()->getByte();
         } else{
             representation[current] = 45;
@@ -131,7 +131,7 @@ int Tree::make(File *file, Node *aux, int current){
 }
 
 void Tree::unmake(Node *aux, unsigned char *representation, int start, int end){
-    if(end <= start){
+    if(end < start){
         return;
     }
     if(aux->getLeft() == 0){
@@ -140,24 +140,27 @@ void Tree::unmake(Node *aux, unsigned char *representation, int start, int end){
     if(aux->getRight() == 0){
         aux->setRight(new Node);
     }
-    cout << "s" << start << "|" << "e" << end << endl;
+//    cout << "s" << start << "|" << "e" << end << endl;
 
     if(representation[start] == 40){
         int i = findRight(representation, start, end);
-        cout << "i = " <<  i << endl;
+//        cout << "i = " <<  i << endl;
+        if(i == 508 || i == 362){
+//            cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+        }
         if(i < end - 1){
             unmake(aux->getLeft(), representation, start, i);
             if(i  != end - 2){
                 unmake(aux->getRight(), representation, i+1, end);
             } else{
-                cout << "Exception2 = " << representation[i+1] << endl;
+//                cout << "Exception2 = " << (int)representation[i+1] << endl;
                 aux->getRight()->setByte(representation[i+1]);
             }
         } else if(i == end){
             unmake(aux,representation,start + 1, end);
         } else{
             if(representation[end] != 41){
-                cout << "Exception = " << representation[end] << endl;
+//                cout << "Exception = " << representation[end] << endl;
                 aux->getRight()->setByte(representation[end]);
                 unmake(aux->getLeft(),representation,start, i);
             } else{
@@ -173,7 +176,7 @@ void Tree::unmake(Node *aux, unsigned char *representation, int start, int end){
             ++start;
         }
         if(aux->getLeft()->getByte() == 0){
-            cout << "Left = " << representation[start] << endl;
+//            cout << "                            Left = " << (int)representation[start] << endl;
             aux->getLeft()->setByte(representation[start]);
             if(representation[start + 1] != 40){
                 unmake(aux,representation,start + 1,end);
@@ -181,7 +184,7 @@ void Tree::unmake(Node *aux, unsigned char *representation, int start, int end){
                 unmake(aux->getRight(),representation,start + 1,end);
             }
         } else if(aux->getRight()->getByte() == 0){
-            cout << "Right = " << representation[start] << endl;
+//            cout << "                            Right = " << (int)representation[start] << endl;
             aux->getRight()->setByte(representation[start]);
         }
     }
@@ -201,8 +204,8 @@ int Tree::findRight(unsigned char *representation, int current, int size){
         }
     }
 
-    cout << "error2!!";
-    return size + 1;
+    cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!error2!!";
+    return size;
 }
 
 unsigned char *Tree::getRep(){
